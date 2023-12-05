@@ -1,9 +1,8 @@
 # Library dependencies
-import torch
 from torch import nn
 from .DPNBlock import DPNBlock
 
-# DPN Block
+# Down Layer (DPN Block)
 class DownLayer(nn.Module):
 	def __init__(self, in_ch, size_conv_a, size_conv_b, size_conv_c, split_size, num_of_blocks):
 		"""
