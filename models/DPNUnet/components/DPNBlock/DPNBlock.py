@@ -1,8 +1,8 @@
 # Library dependencies
 import torch
 from torch import nn
-from .components.BNReLU1Conv import BNReLU1Conv
-from .components.BNReLU3Conv import BNReLU3Conv
+from .components import BNReLU1Conv
+from .components import BNReLU3Conv
 
 # DPN Block
 class DPNBlock(nn.Module):

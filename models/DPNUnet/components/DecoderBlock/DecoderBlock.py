@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from components.BNReLU3ConvDropout import BNReLU3ConvDropout
+from .components import BNReLU3ConvDropout
 
 
 class DecoderBlock(nn.Module):
