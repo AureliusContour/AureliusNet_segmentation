@@ -14,7 +14,7 @@ class BNReLU3ConvDropout(nn.Module):
         dropout (float, optional): Dropout probability. Default is 0.5
     """
 
-    def __init__(self, in_channel: int, out_channel: int, kernel_size: int = 3, padding: int = 0, stride: int = 1, dropout: float = 0.5) -> None:
+    def __init__(self, in_channel: int, out_channel: int, kernel_size: int = 3, padding: int = 1, stride: int = 1, dropout: float = 0.5) -> None:
         super().__init__()
 
         self.batch_norm = nn.BatchNorm2d(in_channel)

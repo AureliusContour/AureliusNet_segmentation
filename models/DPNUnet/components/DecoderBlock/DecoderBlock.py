@@ -44,7 +44,7 @@ class DecoderBlock(nn.Module):
         # Point to Point sum
         ptop_sum = torch.add(split_1_second_part, split_2_second_part)
 
-        x = torch.cat((split_1_first_part, split_2_first_part, ptop_sum))
+        x = torch.cat((split_1_first_part, split_2_first_part, ptop_sum), dim=1)
         x = self.bn_relu_conv_dropout_end(x)
 
         return x
