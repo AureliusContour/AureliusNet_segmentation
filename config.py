@@ -29,4 +29,4 @@ BASE_OUTPUT_PATH = "output"
 
 # define the path to the output weights and runs
 OUTPUT_WEIGHTS_PATH = os.path.join(BASE_OUTPUT_PATH, "weights")
-OUTPUT_RUNS_PATH = os.path.sep.join(BASE_OUTPUT_PATH, "runs")
+OUTPUT_RUNS_PATH = os.path.join(BASE_OUTPUT_PATH, "runs")
