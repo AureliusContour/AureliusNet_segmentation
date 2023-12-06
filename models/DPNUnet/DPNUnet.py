@@ -4,6 +4,15 @@ from .components.UpLayer import UpLayer
 from .components.DownLayer import DownLayer
 from .components.ConvBNReLU import ConvBNReLU
 
+# Importing necessary modules from losses_and_metrics.py
+from .losses_and_metrics import DiceLoss, calculate_confidence
+"""
+ Example usage:
+# dice_loss = DiceLoss()
+# confidence, predictions, low_confidence_idx = calculate_confidence(model_output)
+"""
+
+
 # Down Layer (DPN Block)
 class DPNUnet(nn.Module):
 	def __init__(self, upsample_mode="nearest"):
