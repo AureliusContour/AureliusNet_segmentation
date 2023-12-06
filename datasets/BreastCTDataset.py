@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 import cv2
+import numpy as np
 
 class BreastCTDataset(Dataset):
     """
@@ -23,6 +24,8 @@ class BreastCTDataset(Dataset):
 
         ct_image = cv2.imread(ct_path)
         mask_image = cv2.imread(mask_path)
+        mask_image = cv2.cvtColor(mask_image, cv2.COLOR_BGR2GRAY)
+        mask_image = np.expand_dims(mask_image, axis=0)
 
         if self.transform:
             augmented_images = self.transform(image=ct_image, mask=mask_image)
