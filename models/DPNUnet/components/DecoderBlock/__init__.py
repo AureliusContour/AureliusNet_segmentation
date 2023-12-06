@@ -1,4 +1,4 @@
-from .components.BNReLU3ConvDropout import BNReLU3ConvDropout
+from .components import *
 from .DecoderBlock import DecoderBlock
 
-__all__ = ['DecoderBlock', 'BNReLU3ConvDropout']
+__all__ = ['DecoderBlock', 'components']
