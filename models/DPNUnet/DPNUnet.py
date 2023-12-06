@@ -1,10 +1,10 @@
 # Library dependencies
 from torch import nn
-from .components.UpLayer import UpLayer
-from .components.DownLayer import DownLayer
-from .components.ConvBNReLU import ConvBNReLU
+from .components import UpLayer
+from .components import DownLayer
+from .components import ConvBNReLU
 
-# Down Layer (DPN Block)
+# DPN-Unet architecture
 class DPNUnet(nn.Module):
 	def __init__(self, upsample_mode="nearest"):
 		"""
