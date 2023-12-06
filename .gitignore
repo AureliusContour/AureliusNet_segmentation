@@ -161,3 +161,8 @@ cython_debug/
 
 # Misc
 .DS_Store
+
+# Dataset
+datasets/train/
+test.ipynb
+runs/
