@@ -4,7 +4,7 @@ from .components import UpLayer
 from .components import DownLayer
 from .components import ConvBNReLU
 
-# Down Layer (DPN Block)
+# DPN-Unet architecture
 class DPNUnet(nn.Module):
 	def __init__(self, upsample_mode="nearest"):
 		"""
