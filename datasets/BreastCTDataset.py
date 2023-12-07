@@ -22,10 +22,13 @@ class BreastCTDataset(Dataset):
         mask_path = self.dataframe.iloc[idx]["resized_mask_file"]
         label = self.dataframe.iloc[idx]["label"]
 
-        ct_image = cv2.imread(ct_path)
-        mask_image = cv2.imread(mask_path)
+        ct_image = cv2.imread(ct_path)        
+        ct_image = (ct_image/255.0).astype(np.float32)
+        
+        mask_image = cv2.imread(mask_path)		
         mask_image = cv2.cvtColor(mask_image, cv2.COLOR_BGR2GRAY)
         mask_image = np.expand_dims(mask_image, axis=0)
+        mask_image = (mask_image/255.0).astype(np.float32)
 
         if self.transform:
             augmented_images = self.transform(image=ct_image, mask=mask_image)
