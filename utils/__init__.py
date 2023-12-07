@@ -1,5 +1,6 @@
 #utils/losses_and_metrics.py
-from .active_learning.active_learning_utils import *
-from .losses_and_metrics.losses_and_metrics_utils import DiceClass, calculate_confidence 
+from .active_learning import *
+from .losses_and_metrics import *
+from .training import *
 
-__all__ = ["DiceLoss", "calculate_confidence"]
+__all__ = ["active_learning", "losses_and_metrics", "training"]
