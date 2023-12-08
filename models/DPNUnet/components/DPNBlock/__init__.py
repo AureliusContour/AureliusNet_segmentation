@@ -1,5 +1,5 @@
 from .DPNBlock import DPNBlock
-from .components import *
+from . import components
 
 __all__ = [
 	"DPNBlock", "components"

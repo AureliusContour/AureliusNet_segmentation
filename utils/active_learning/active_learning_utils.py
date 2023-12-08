@@ -4,11 +4,11 @@ This code ties together the active_learning_pipeline's different components of t
 """
 
 import torch
-from .losses_and_metrics.losses_and_metrics_utils import calculate_confidence
-from .components.sampling import sample_uncertain_masks
-from .components.intervention import initiate_human_intervention
-from .components.augmentation import augment_and_store_data
-from .components.retraining import retraining_pipeline, automated_model_retraining
+from utils.losses_and_metrics import calculate_confidence
+from .components import sample_uncertain_masks
+from .components import initiate_human_intervention
+from .components import augment_and_store_data
+from .components import retraining_pipeline, automated_model_retraining
 
 def active_learning_pipeline(model, dataloader, dataset, threshold=0.80, num_epochs=5):
     # Step 1: Sampling Uncertain Masks

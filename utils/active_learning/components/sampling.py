@@ -8,7 +8,7 @@ analyzing the prediction confidence scores to find uncertain samples that are be
 
 import torch
 from torchvision import transforms
-from .losses_and_metrics.losses_and_metrics_utils import calculate_confidence
+from utils.losses_and_metrics import calculate_confidence
 import logging
 
 # Set up logging
