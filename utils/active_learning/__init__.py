@@ -1,11 +1,8 @@
 #utils/active_learning/__init__.py 
-from .components import  *
-from .active_learning_utils import *
+from . import components
+from .active_learning_utils import active_learning_pipeline
 
 __all__ = [
-  'sampling',
-  'intervention',
-  'augmentation',
-  'retraining',
-  'active_learning_pipeline'
+  'components',
+  'active_learning_pipeline',
 ]

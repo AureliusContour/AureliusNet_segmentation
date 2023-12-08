@@ -1,5 +1,5 @@
 from .DPNUnet import DPNUnet
-from .components import *
+from . import components
 
 __all__ = [
 	"DPNUnet", "components"

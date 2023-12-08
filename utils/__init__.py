@@ -1,6 +1,6 @@
 #utils/losses_and_metrics.py
-from .active_learning import *
-from .losses_and_metrics import *
-from .training import *
+from . import active_learning
+from . import losses_and_metrics
+from . import training
 
 __all__ = ["active_learning", "losses_and_metrics", "training"]
