@@ -41,3 +41,22 @@ def calculate_confidence(preds, threshold=0.8):
     low_confidence_idx = torch.where(confidence < threshold)
     
     return confidence, predictions, low_confidence_idx[0]
+
+def dice_score(predicted_masks, true_masks, epsilon=1e-8):
+    """
+    Calculate the Dice coefficient for batches of binary masks.
+
+    Args:
+    - predicted_masks (torch.Tensor): Predicted masks.
+    - true_masks (torch.Tensor): True binary masks.
+    - epsilon (float): A small constant to avoid division by zero.
+
+    Returns:
+    - torch.Tensor: Dice coefficients for each mask in the batch.
+    """
+    predicted_masks = torch.clamp(predicted_masks, 0, 1) # Clip the mask
+    intersection = torch.sum(predicted_masks * true_masks, dim=(2, 3))
+    union = torch.sum(predicted_masks, dim=(2, 3)) + torch.sum(true_masks, dim=(2, 3)) + epsilon
+
+    dice = (2.0 * intersection) / union
+    return dice
