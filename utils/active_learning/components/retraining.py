@@ -1,5 +1,7 @@
 # utils/active_learning/retraining.py
-
+"""
+This code: monitors the dataset for augmented data, retrains the model on the augmented data, and monitors and logs model performance to ensure no segmenting quality regression
+"""
 import logging
 
 # Set up logging
