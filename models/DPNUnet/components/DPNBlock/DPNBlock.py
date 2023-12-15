@@ -6,7 +6,7 @@ from .components import BNReLU3Conv
 
 # DPN Block
 class DPNBlock(nn.Module):
-	def __init__(self, in_ch, size_conv_a, size_conv_b, size_conv_c, split_size):
+	def __init__(self, in_ch:int, size_conv_a:int, size_conv_b:int, size_conv_c:int, split_size:int) -> None:
 		"""
 		A DPN Block that takes in the
 		1. input channel, 
@@ -25,13 +25,13 @@ class DPNBlock(nn.Module):
 		self.split2_size_bottom = size_conv_c - self.split1_size_top
 
 	def forward(self, x):
-		conv1 = self.brc1a(x)
-		conv2 = self.brc3b(conv1)
-		conv3 = self.brc1c(conv2)
 		split1_top, split1_bottom = torch.split(x, [self.split1_size_top, self.split1_size_bottom], dim=1)
-		split2_top, split2_bottom = torch.split(conv3, [self.split2_size_top, self.split2_size_bottom], dim=1)
+		x = self.brc1a(x)
+		x = self.brc3b(x)
+		x = self.brc1c(x)
+		split2_top, split2_bottom = torch.split(x, [self.split2_size_top, self.split2_size_bottom], dim=1)
 		summed_top = torch.add(split2_top, split1_top)
 		concat_bottom = torch.concat((split2_bottom, split1_bottom), dim=1)
-		concat_all = torch.concat((summed_top, concat_bottom), dim=1)
-		return concat_all
+		x = torch.concat((summed_top, concat_bottom), dim=1)
+		return x
 

@@ -23,7 +23,10 @@ class DecoderBlock(nn.Module):
         self.bn_relu_conv_dropout_front = BNReLU3ConvDropout(
             in_channel=in_channel, out_channel=out_channel)
 
-        self.bn_relu_conv_dropout_mid = BNReLU3ConvDropout(
+        self.bn_relu_conv_dropout_mid_1 = BNReLU3ConvDropout(
+            in_channel=out_channel, out_channel=out_channel)
+        
+        self.bn_relu_conv_dropout_mid_2 = BNReLU3ConvDropout(
             in_channel=out_channel, out_channel=out_channel)
 
         self.bn_relu_conv_dropout_end = BNReLU3ConvDropout(
@@ -36,8 +39,8 @@ class DecoderBlock(nn.Module):
             x, 2, dim=1)
 
         # Second Split
-        x = self.bn_relu_conv_dropout_mid(x)
-        x = self.bn_relu_conv_dropout_mid(x)
+        x = self.bn_relu_conv_dropout_mid_1(x)
+        x = self.bn_relu_conv_dropout_mid_2(x)
         split_2_first_part, split_2_second_part = torch.tensor_split(
             x, 2, dim=1)
 
