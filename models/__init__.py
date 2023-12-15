@@ -1,5 +1,5 @@
-from .DPNUnet import DPNUnet
+from .DPNUnet import DPNUnet, DPNUnetLightning
 
 __all__ = [
-	"DPNUnet"
+	"DPNUnet", "DPNUnetLightning"
 ]
