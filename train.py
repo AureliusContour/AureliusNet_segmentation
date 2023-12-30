@@ -71,19 +71,19 @@ def main():
 	parser = ArgumentParser(
                     prog='DPNUnet Trainer',
                     description='Trains the DPNUnet model on a specified dataset',
-                    epilog='Make sure you include dataset csv path in either config or argument!')
+                    epilog='Make sure you include dataset csv path and the config yaml path!')
 	
-	parser.add_argument("-d", "--dataset", required=True)
-	parser.add_argument("-c", "--config", required=True)
-	parser.add_argument("-p", "--project", metavar="Project Name", default="BreastCancerCT_DPNUnet")
-	parser.add_argument("-n", "--name", metavar="Run Name", default=timestamp)
+	parser.add_argument("-d", "--dataset", metavar="Dataset CSV", help="Path to dataset csv.", required=True)
+	parser.add_argument("-c", "--config", metavar="Config YAML", help="Path to config yaml", required=True)
+	parser.add_argument("-p", "--project", metavar="Project Name", help="wandb project name", default="BreastCancerCT_DPNUnet")
+	parser.add_argument("-n", "--name", metavar="Run Name", help="wandb project run name", default=timestamp)
 	parser.add_argument("-r", "--resume", metavar="Resume Checkpoint", help="Path to .ckpt file", default=None)
-	parser.add_argument("-de", "--device")
-	parser.add_argument("-lr", "--learningrate", type=float)
-	parser.add_argument("-ep", "--epoch", type=int)
-	parser.add_argument("-bs", "--batchsize", type=int)
-	parser.add_argument("-fd", "--fastdevrun", action="store_true")
-	parser.add_argument("-bsf", "--batchsizefinder", action="store_true")
+	parser.add_argument("-de", "--device", metavar="Accelerator device type", choices=["cpu", "gpu", "tpu", "ipu", "hpu", "mps", "auto"])
+	parser.add_argument("-lr", "--learningrate", type=float, metavar="Optimizer Learning Rate", help="Optimally between 0.0001 and 0.01 for most cases")
+	parser.add_argument("-ep", "--epoch", type=int, metavar="Number of Epoch")
+	parser.add_argument("-bs", "--batchsize", type=int, metavar="Batch Size", help="ideally 32, but can adjust according to needs...")
+	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
+	parser.add_argument("-bsf", "--batchsizefinder", action="store_true", help="Experimental feature (MIGHT NOT WORK!)")
 
 	# Load args, dataset and config
 	ARGS = parser.parse_args()
