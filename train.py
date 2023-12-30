@@ -64,6 +64,9 @@ def default_management(parsed_args: Namespace, config_dict: dict) -> None:
 		config_dict["training"]["batch_size"] = 32 # Default if both config and arg is empty
 	
 def main():
+	# Time of execution
+	timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
 	# Arguments parsing
 	parser = ArgumentParser(
                     prog='DPNUnet Trainer',
@@ -72,7 +75,9 @@ def main():
 	
 	parser.add_argument("-d", "--dataset", required=True)
 	parser.add_argument("-c", "--config", required=True)
-	parser.add_argument("-n", "--name", default="BreastCancerCT_DPNUnet")
+	parser.add_argument("-p", "--project", metavar="Project Name", default="BreastCancerCT_DPNUnet")
+	parser.add_argument("-n", "--name", metavar="Run Name", default=timestamp)
+	parser.add_argument("-r", "--resume", metavar="Resume Checkpoint", help="Path to .ckpt file", default=None)
 	parser.add_argument("-de", "--device")
 	parser.add_argument("-lr", "--learningrate", type=float)
 	parser.add_argument("-ep", "--epoch", type=int)
@@ -109,8 +114,7 @@ def main():
 	early_stopping_callback = EarlyStopping("val_loss", patience=2, mode="min")
 	pbar = RichProgressBar(leave=True, refresh_rate=1)
 	# checkpoint_callback = ModelCheckpoint(monitor="val_loss", mode="min")
-	timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-	wandb_logger = WandbLogger(project=ARGS.name, log_model="all", name=f"{ARGS.name}_{timestamp}")
+	wandb_logger = WandbLogger(project=ARGS.project, log_model="all", name=ARGS.name)
 	wandb.login()
 	callbacks = [model_summary_callback, early_stopping_callback, pbar]
 	
@@ -127,7 +131,11 @@ def main():
 				min_epochs=1,
 				fast_dev_run=ARGS.fastdevrun)
 	print() #empty line
-	trainer.fit(dpnunet, datamodule=data_module)
+
+	if ARGS.resume != None:
+		trainer.fit(dpnunet, datamodule=data_module, ckpt_path=ARGS.resume)
+	else:
+		trainer.fit(dpnunet, datamodule=data_module)
 	
 
 if __name__ == "__main__":
