@@ -1,0 +1,19 @@
+# Device for training (if not mentioned, then will be automatic)
+# device: cuda
+
+# Training params
+training:
+  learning_rate: 0.001
+  num_epochs: 100
+  batch_size: 32
+
+# Image Input dimensions
+image:
+  width: 512
+  height: 512
+
+# Thresholds
+threshold:
+  segmentation: 0.5
+  classification: 0.75
+

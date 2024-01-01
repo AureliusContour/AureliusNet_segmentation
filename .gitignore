@@ -165,4 +165,5 @@ cython_debug/
 # Dataset
 datasets/train/
 test.ipynb
-output/
+wandb/
+artifacts/
