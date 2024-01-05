@@ -119,10 +119,10 @@ def main():
 	model_summary_callback = RichModelSummary(max_depth=3, theme="")
 	early_stopping_callback = EarlyStopping("val_loss", patience=CONFIG["training"]["early_stopping_patience"], mode="min")
 	pbar = RichProgressBar(leave=True, refresh_rate=1)
-	tbar = TQDMProgressBar()
+	# tbar = TQDMProgressBar()
 	# checkpoint_callback = ModelCheckpoint(monitor="val_loss", mode="min")
 	wandb_logger = WandbLogger(project=ARGS.project, log_model="all", name=ARGS.name, checkpoint_name=f"model_{ARGS.project}_{ARGS.name}")
-	callbacks = [model_summary_callback, early_stopping_callback, tbar]
+	callbacks = [model_summary_callback, early_stopping_callback, pbar]
 	
 	if ARGS.batchsizefinder:
 		bsf = BatchSizeFinder("binsearch", init_val=4)
