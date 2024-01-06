@@ -167,3 +167,5 @@ datasets/train/
 test.ipynb
 wandb/
 artifacts/
+kaggle/
+kaggle.zip

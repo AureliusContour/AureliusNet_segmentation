@@ -1,7 +1,7 @@
 # PyTorch Lightning libraries
 from torch.utils.data import DataLoader
 from lightning import Trainer
-from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint, EarlyStopping, RichProgressBar, BatchSizeFinder
+from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint, EarlyStopping, RichProgressBar, BatchSizeFinder, TQDMProgressBar
 from lightning.pytorch.loggers import WandbLogger
 
 # Local libraries
@@ -50,18 +50,23 @@ def default_management(parsed_args: Namespace, config_dict: dict) -> None:
 
 	if parsed_args.learningrate != None:
 		config_dict["training"]["learning_rate"] = parsed_args.learningrate
-	elif config_dict["training"]["learning_rate"] == None:
+	elif config_dict.get("training", {}).get("learning_rate") == None:
 		config_dict["training"]["learning_rate"] = 0.001 # Default if both config and arg is empty
 
 	if parsed_args.epoch != None:
 		config_dict["training"]["num_epochs"] = parsed_args.epoch
-	elif config_dict["training"]["num_epochs"] == None:
+	elif config_dict.get("training", {}).get("num_epochs") == None:
 		config_dict["training"]["num_epochs"] = 100 # Default if both config and arg is empty
 
 	if parsed_args.batchsize != None:
 		config_dict["training"]["batch_size"] = parsed_args.batchsize
-	elif config_dict["training"]["batch_size"] == None:
+	elif config_dict.get("training", {}).get("batch_size") == None:
 		config_dict["training"]["batch_size"] = 32 # Default if both config and arg is empty
+	
+	if parsed_args.patience != None:
+		config_dict["training"]["early_stopping_patience"] = parsed_args.patience
+	elif config_dict.get("training", {}).get("early_stopping_patience") == None:
+		config_dict["training"]["early_stopping_patience"] = config_dict["training"]["num_epochs"] // 10 # Default if both config and arg is empty
 	
 def main():
 	# Time of execution
@@ -82,6 +87,7 @@ def main():
 	parser.add_argument("-lr", "--learningrate", type=float, metavar="Optimizer Learning Rate", help="Optimally between 0.0001 and 0.01 for most cases")
 	parser.add_argument("-ep", "--epoch", type=int, metavar="Number of Epoch")
 	parser.add_argument("-bs", "--batchsize", type=int, metavar="Batch Size", help="ideally 32, but can adjust according to needs...")
+	parser.add_argument("-pa", "--patience", type=int, metavar="Early Stopping Patience", help="ideally would be 10% of the total number of epochs.")
 	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
 	parser.add_argument("-bsf", "--batchsizefinder", action="store_true", help="Experimental feature (MIGHT NOT WORK!)")
 
@@ -111,11 +117,11 @@ def main():
 
 	# Initialize callbacks
 	model_summary_callback = RichModelSummary(max_depth=3, theme="")
-	early_stopping_callback = EarlyStopping("val_loss", patience=2, mode="min")
+	early_stopping_callback = EarlyStopping("val_loss", patience=CONFIG["training"]["early_stopping_patience"], mode="min")
 	pbar = RichProgressBar(leave=True, refresh_rate=1)
+	# tbar = TQDMProgressBar()
 	# checkpoint_callback = ModelCheckpoint(monitor="val_loss", mode="min")
-	wandb_logger = WandbLogger(project=ARGS.project, log_model="all", name=ARGS.name)
-	wandb.login()
+	wandb_logger = WandbLogger(project=ARGS.project, log_model="all", name=ARGS.name, checkpoint_name=f"model_{ARGS.project}_{ARGS.name}")
 	callbacks = [model_summary_callback, early_stopping_callback, pbar]
 	
 	if ARGS.batchsizefinder:
@@ -129,6 +135,7 @@ def main():
 				log_every_n_steps=1,
 				max_epochs=CONFIG["training"]["num_epochs"],
 				min_epochs=1,
+				enable_checkpointing=False,
 				fast_dev_run=ARGS.fastdevrun)
 	print() #empty line
 
