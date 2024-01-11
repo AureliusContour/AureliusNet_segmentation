@@ -9,7 +9,7 @@ class UnetLightning(L.LightningModule):
 	def __init__(self, 
 			  	lossFunction:nn.Module,
 				learning_rate=1e-3,
-				n_channels=3):
+				n_channels=1):
 		super().__init__()
 		self.__unet = Unet(n_channels=n_channels)
 		self.__lossFunction = lossFunction
