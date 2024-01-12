@@ -27,7 +27,7 @@ class LungCTDataModule(L.LightningDataModule):
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test":
-            self.testDS = LungCTDataModule(self.df, num_adjacent_slices=self.num_adjacent_slices, segmented=self.segmented, transform=transform, set_type="test")
+            self.testDS = LungCTDataset(self.df, num_adjacent_slices=self.num_adjacent_slices, segmented=self.segmented, transform=transform, set_type="test")
 
     def train_dataloader(self):
         return DataLoader(self.trainDS, 
