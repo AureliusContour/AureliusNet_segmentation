@@ -1,18 +1,17 @@
 # PyTorch Lightning libraries
 from torch.utils.data import DataLoader
 from lightning import Trainer
-from lightning.pytorch.callbacks import RichModelSummary, ModelCheckpoint, EarlyStopping, RichProgressBar, BatchSizeFinder, TQDMProgressBar
+from lightning.pytorch.callbacks import RichModelSummary, EarlyStopping, RichProgressBar, BatchSizeFinder
 from lightning.pytorch.loggers import WandbLogger
 
 # Local libraries
 from datasets import BreastCTDataset, transform, BreastCTDataModule
-from models import DPNUnetLightning
+from models import DPNUnetLightning, UnetLightning, InceptionUnetLightning
 from utils.losses_and_metrics import DiceLoss
 
 # Other libraries
 import pandas as pd
 import os
-import wandb
 from argparse import ArgumentParser, Namespace
 from datetime import datetime
 import yaml
@@ -90,6 +89,7 @@ def main():
 	parser.add_argument("-pa", "--patience", type=int, metavar="Early Stopping Patience", help="ideally would be 10% of the total number of epochs.")
 	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
 	parser.add_argument("-bsf", "--batchsizefinder", action="store_true", help="Experimental feature (MIGHT NOT WORK!)")
+	parser.add_argument("-md", "--model", choices=["DPNUnet", "Unet", "InceptionUnet"], default="DPNUnet")
 
 	# Load args, dataset and config
 	ARGS = parser.parse_args()
@@ -109,11 +109,22 @@ def main():
 
 	# Initialize DPNUnet Model
 	dice_loss = DiceLoss()
-	dpnunet = DPNUnetLightning(
-				lossFunction=dice_loss,
-				learning_rate=CONFIG["training"]["learning_rate"]
-			)
-	print(f'\nDPNUnet Model initialized and optimized with a learning rate of {CONFIG["training"]["learning_rate"]}')
+	if ARGS.model == "DPNUnet":
+		model = DPNUnetLightning(
+					lossFunction=dice_loss,
+					learning_rate=CONFIG["training"]["learning_rate"]
+				)
+		print(f'\nDPNUnet Model initialized and optimized with a learning rate of {CONFIG["training"]["learning_rate"]}')
+	elif ARGS.model == "Unet":
+		model = UnetLightning(
+					lossFunction=dice_loss,
+					learning_rate=CONFIG["training"]["learning_rate"]
+				)
+	elif ARGS.model == "InceptionUnet":
+		model = InceptionUnetLightning(
+					lossFunction=dice_loss,
+					learning_rate=CONFIG["training"]["learning_rate"]
+				)
 
 	# Initialize callbacks
 	model_summary_callback = RichModelSummary(max_depth=3, theme="")
@@ -140,9 +151,9 @@ def main():
 	print() #empty line
 
 	if ARGS.resume != None:
-		trainer.fit(dpnunet, datamodule=data_module, ckpt_path=ARGS.resume)
+		trainer.fit(model, datamodule=data_module, ckpt_path=ARGS.resume)
 	else:
-		trainer.fit(dpnunet, datamodule=data_module)
+		trainer.fit(model, datamodule=data_module)
 	
 
 if __name__ == "__main__":
