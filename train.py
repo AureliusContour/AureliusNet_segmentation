@@ -5,7 +5,7 @@ from lightning.pytorch.callbacks import RichModelSummary, EarlyStopping, RichPro
 from lightning.pytorch.loggers import WandbLogger
 
 # Local libraries
-from datasets import BreastCTDataset, transform, BreastCTDataModule
+from datasets import LungCTDataModule
 from models import DPNUnetLightning, UnetLightning, InceptionUnetLightning
 from utils.losses_and_metrics import DiceLoss
 
@@ -16,26 +16,6 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 import yaml
 
-
-def preprocess(data: pd.DataFrame, config:dict) -> (BreastCTDataset, BreastCTDataset):
-	# convert to Dataset
-	trainDS = BreastCTDataset(data, transform=transform, set_type="train")
-	valDS = BreastCTDataset(data, transform=transform, set_type="validation")
-	print(f"[INFO] found {len(trainDS)} examples in the training set...")
-	print(f"[INFO] found {len(valDS)} examples in the validation set...")
-	trainLoader = DataLoader(trainDS, 
-						  batch_size=config["training"]["batch_size"], 
-						  shuffle=True, 
-						  num_workers=os.cpu_count(), 
-						  pin_memory=True, 
-						  persistent_workers=True)
-	valLoader = DataLoader(valDS, 
-						batch_size=config["training"]["batch_size"], 
-						shuffle=False, 
-						num_workers=os.cpu_count(), 
-						pin_memory=True, 
-						persistent_workers=True)
-	return trainLoader, valLoader
 
 def default_management(parsed_args: Namespace, config_dict: dict) -> None:
 	"""
@@ -67,6 +47,16 @@ def default_management(parsed_args: Namespace, config_dict: dict) -> None:
 	elif config_dict.get("training", {}).get("early_stopping_patience") == None:
 		config_dict["training"]["early_stopping_patience"] = config_dict["training"]["num_epochs"] // 10 # Default if both config and arg is empty
 	
+	if parsed_args.adjacentslices != None:
+		config_dict["training"]["num_adjacent_slices"] = parsed_args.adjacentslices
+	elif config_dict.get("training", {}).get("num_adjacent_slices") == None:
+		config_dict["training"]["num_adjacent_slices"] = 1 # Default if both config and arg is empty
+	
+	if parsed_args.segmentedlungs != None:
+		config_dict["training"]["use_segmented_lungs"] = parsed_args.segmentedlungs
+	elif config_dict.get("training", {}).get("use_segmented_lungs") == None:
+		config_dict["training"]["use_segmented_lungs"] = False # Default if both config and arg is empty
+
 def main():
 	# Time of execution
 	timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -85,6 +75,8 @@ def main():
 	parser.add_argument("-de", "--device", metavar="Accelerator device type", choices=["cpu", "gpu", "tpu", "ipu", "hpu", "mps", "auto"])
 	parser.add_argument("-lr", "--learningrate", type=float, metavar="Optimizer Learning Rate", help="Optimally between 0.0001 and 0.01 for most cases")
 	parser.add_argument("-ep", "--epoch", type=int, metavar="Number of Epoch")
+	parser.add_argument("-adj", "--adjacentslices", type=int, metavar="Number of Adjacent Slices")
+	parser.add_argument("-seg", "--segmentedlungs", action="store_true", help="Use CT with Segmented Lungs for training.")
 	parser.add_argument("-bs", "--batchsize", type=int, metavar="Batch Size", help="ideally 32, but can adjust according to needs...")
 	parser.add_argument("-pa", "--patience", type=int, metavar="Early Stopping Patience", help="ideally would be 10% of the total number of epochs.")
 	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
@@ -102,10 +94,14 @@ def main():
 	default_management(ARGS, CONFIG)
 
 	# Preprocess dataloader
-	data_module = BreastCTDataModule(DATASET, CONFIG["training"]["batch_size"])
+	data_module = LungCTDataModule(dataframe=DATASET, 
+								batch_size=CONFIG["training"]["batch_size"], 
+								num_adjacent_slices=CONFIG["training"]["num_adjacent_slices"],
+								segmented=CONFIG["training"]["use_segmented_lungs"]
+								)
+
 	print(f"[INFO] found {len(DATASET[DATASET['set'] == 'train'])} examples in the training set...")
 	print(f"[INFO] found {len(DATASET[DATASET['set'] == 'validation'])} examples in the validation set...")
-	# trainLoader, valLoader = preprocess(DATASET, CONFIG)
 
 	# Initialize DPNUnet Model
 	dice_loss = DiceLoss()
