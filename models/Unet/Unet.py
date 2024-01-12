@@ -27,4 +27,5 @@ class Unet(nn.Module):
         x = self.up3(x, x2)
         x = self.up4(x, x1)
         x = self.outc(x)
+        x = torch.sigmoid(x)
         return x

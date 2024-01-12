@@ -6,7 +6,7 @@ from lightning.pytorch.loggers import WandbLogger
 
 # Local libraries
 from datasets import BreastCTDataset, transform, BreastCTDataModule
-from models import DPNUnetLightning, UnetLightning
+from models import DPNUnetLightning, UnetLightning, InceptionUnetLightning
 from utils.losses_and_metrics import DiceLoss
 
 # Other libraries
@@ -89,7 +89,7 @@ def main():
 	parser.add_argument("-pa", "--patience", type=int, metavar="Early Stopping Patience", help="ideally would be 10% of the total number of epochs.")
 	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
 	parser.add_argument("-bsf", "--batchsizefinder", action="store_true", help="Experimental feature (MIGHT NOT WORK!)")
-	parser.add_argument("-md", "--model", choices=["DPNUnet", "Unet"], default="DPNUnet")
+	parser.add_argument("-md", "--model", choices=["DPNUnet", "Unet", "InceptionUnet"], default="DPNUnet")
 
 	# Load args, dataset and config
 	ARGS = parser.parse_args()
@@ -117,6 +117,11 @@ def main():
 		print(f'\nDPNUnet Model initialized and optimized with a learning rate of {CONFIG["training"]["learning_rate"]}')
 	elif ARGS.model == "Unet":
 		model = UnetLightning(
+					lossFunction=dice_loss,
+					learning_rate=CONFIG["training"]["learning_rate"]
+				)
+	elif ARGS.model == "InceptionUnet":
+		model = InceptionUnetLightning(
 					lossFunction=dice_loss,
 					learning_rate=CONFIG["training"]["learning_rate"]
 				)
