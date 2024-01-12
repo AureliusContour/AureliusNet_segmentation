@@ -27,12 +27,12 @@ class DPNUnetLightning(L.LightningModule):
 		x, y, _ = batch
 		preds = self.__dpnunet(x)
 		loss = self.__lossFunction(preds, y)
-		self.log("train_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
+		self.log("train_loss", loss, prog_bar=True, on_step=True, on_epoch=True, sync_dist=True)
 		return loss
 	
 	def validation_step(self, batch, batch_idx):
 		x, y, _ = batch
 		preds = self.__dpnunet(x)
 		loss = self.__lossFunction(preds, y)
-		self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True)
+		self.log("val_loss", loss, prog_bar=True, on_step=True, on_epoch=True, sync_dist=True)
 		return loss

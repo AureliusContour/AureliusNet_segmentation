@@ -137,6 +137,7 @@ def main():
 	
 	# Trainer
 	trainer = Trainer(callbacks=callbacks,
+				   sync_batchnorm=True,
 				  logger=wandb_logger,
 				  accelerator=CONFIG["device"],
 				log_every_n_steps=1,
