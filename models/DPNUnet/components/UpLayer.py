@@ -38,9 +38,9 @@ class UpLayer(nn.Module):
 		return x1
 	
 class AureliusUpLayer(nn.Module):
-	def __init__(self, in_channels, out_channels, checkpoint=False):
+	def __init__(self, in_channels, out_channels, upsample_mode="bilinear", checkpoint=False):
 		super().__init__()
-		self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+		self.up = nn.Upsample(scale_factor=2, mode=upsample_mode, align_corners=True)
 		self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)
 		self.checkpoint = checkpoint
 
