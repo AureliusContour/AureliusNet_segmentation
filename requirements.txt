@@ -12,3 +12,4 @@ tensorboard>=2.15.1
 matplotlib>=3.4.0
 lightning>=2.1.2
 pyyaml>=6.0.1
+SciPy==1.12.0rc2
