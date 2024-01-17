@@ -35,8 +35,9 @@ class DownLayer(nn.Module):
 		x = self.max_pooling(x)
 		x = self.initDPN(x)
 		for i in range(self.num_of_blocks - 1):
-			if self.checkpoint and ( (i + 2) % round(self.num_of_blocks ** 0.5) ) == 0:
-				x = checkpoint.checkpoint(self.custom_checkpoint_call(self.nextDPN[i]), x, use_reentrant=False)
-			else:
-				x = self.nextDPN[i](x)
+			x = self.nextDPN[i](x)
+			# if self.checkpoint and ( (i + 2) % round(self.num_of_blocks ** 0.5) ) == 0:
+			# 	x = checkpoint.checkpoint(self.custom_checkpoint_call(self.nextDPN[i]), x, use_reentrant=False)
+			# else:
+			# 	x = self.nextDPN[i](x)
 		return x

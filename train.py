@@ -144,8 +144,7 @@ def main():
 				max_epochs=CONFIG["training"]["num_epochs"],
 				min_epochs=1,
 				enable_checkpointing=False,
-				fast_dev_run=ARGS.fastdevrun,
-				sync_batchnorm=True)
+				fast_dev_run=ARGS.fastdevrun)
 	print() #empty line
 
 	if ARGS.resume != None:
