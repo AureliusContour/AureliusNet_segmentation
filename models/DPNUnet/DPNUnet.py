@@ -1,17 +1,13 @@
 # Library dependencies
 from torch import nn
 import torch.utils.checkpoint as checkpoint
-from .components import UpLayer
+from .components import AureliusUpLayer
 from .components import DownLayer
 from .components import ConvBNReLU
 
 # DPN-Unet architecture
 class DPNUnet(nn.Module):
-	def __init__(self, upsample_mode:str="nearest", is_small:bool=True, 
-			  dpn_block_count_1:int=3, 
-			  dpn_block_count_2:int=4, 
-			  dpn_block_count_3:int=8, 
-			  dpn_block_count_4:int=3):
+	def __init__(self, upsample_mode:str="bilinear"):
 		"""
 		A Full DPNUnet architecture module that takes in a 3x512x512 tensor,
 		and outputs a 1x512x512 tensor.
@@ -19,18 +15,23 @@ class DPNUnet(nn.Module):
 		Arguments it takes are:
 		1. upsample_mode (str, optional): Upsampling mode. Default is 'nearest'
 		"""
-		div_fctr = 2 if is_small else 1
 		super(DPNUnet, self).__init__()
-		self.input_conv = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
-		self.down_layer1 = DownLayer(64, 48, 48, 128, 16, dpn_block_count_1)
-		self.up_layer1 = UpLayer(144, 64, 64, upsample_mode=upsample_mode)
-		self.down_layer2 = DownLayer(144, 96, 96, 256, 32, dpn_block_count_2, True)
-		self.up_layer2 = UpLayer(288, 144, 144, upsample_mode=upsample_mode)
-		self.down_layer3 = DownLayer(288, 192, 192, 512, 64, dpn_block_count_3)
-		self.up_layer3 = UpLayer(576, 288, 288, upsample_mode=upsample_mode)
-		self.down_layer4 = DownLayer(576, 384, 384, 1024, 128, dpn_block_count_4, True)
-		self.up_layer4 = UpLayer(1152, 576, 576, upsample_mode=upsample_mode)
-		self.center_block = ConvBNReLU(1152, 1152)
+		self.input_conv = nn.Sequential(
+			ConvBNReLU(3, 10),
+			nn.MaxPool2d(3, stride=2, padding=1)
+		)
+
+		self.down_layer1 = DownLayer(10, 96, 128, 128, 80, 64, 3)
+		self.down_layer2 = DownLayer(144, 192, 256, 256, 160, 128, 4)
+		self.down_layer3 = DownLayer(320, 320, 512, 512, 288, 256, 12)
+		self.down_layer4 = DownLayer(704, 640, 1024, 1024, 576, 512, 3)
+		
+		self.center_block = ConvBNReLU(832, 832)
+		self.up_layer4 = AureliusUpLayer(1536, 320, upsample_mode=upsample_mode)
+		self.up_layer3 = AureliusUpLayer(640, 144, upsample_mode=upsample_mode)
+		self.up_layer2 = AureliusUpLayer(288, 64, upsample_mode=upsample_mode)
+		self.up_layer1 = AureliusUpLayer(74, 64, upsample_mode=upsample_mode)
+		
 		self.upsample = nn.Upsample(scale_factor=2, mode=upsample_mode)
 		self.final_conv_block = ConvBNReLU(64, 1)
 		self.sigmoid = nn.Sigmoid()
