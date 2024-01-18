@@ -6,7 +6,7 @@ from lightning.pytorch.loggers import WandbLogger
 
 # Local libraries
 from datasets import LungCTDataModule
-from models import DPNUnetLightning, UnetLightning, InceptionUnetLightning
+from models import DPNUnetLightning, UnetLightning, InceptionUnetLightning, AureliusUnetLightning
 from utils.losses_and_metrics import DiceLoss
 
 # Other libraries
@@ -81,7 +81,7 @@ def main():
 	parser.add_argument("-pa", "--patience", type=int, metavar="Early Stopping Patience", help="ideally would be 10% of the total number of epochs.")
 	parser.add_argument("-fd", "--fastdevrun", action="store_true", help="Developer Run only takes in one batch and one epoch")
 	parser.add_argument("-bsf", "--batchsizefinder", action="store_true", help="Experimental feature (MIGHT NOT WORK!)")
-	parser.add_argument("-md", "--model", choices=["DPNUnet", "Unet", "InceptionUnet"], default="DPNUnet")
+	parser.add_argument("-md", "--model", choices=["DPNUnet", "Unet", "InceptionUnet", "AureliusUnet"], default="AureliusUnet")
 
 	# Load args, dataset and config
 	ARGS = parser.parse_args()
@@ -121,6 +121,11 @@ def main():
 					lossFunction=dice_loss,
 					learning_rate=CONFIG["training"]["learning_rate"]
 				)
+	elif ARGS.model == "AureliusUnet":
+		model = AureliusUnetLightning(
+					lossFunction=dice_loss,
+					learning_rate=CONFIG["training"]["learning_rate"]
+				)
 
 	# Initialize callbacks
 	model_summary_callback = RichModelSummary(max_depth=3, theme="")
@@ -130,16 +135,16 @@ def main():
 	# checkpoint_callback = ModelCheckpoint(monitor="val_loss", mode="min")
 	wandb_logger = WandbLogger(project=ARGS.project, log_model="all", name=ARGS.name, checkpoint_name=f"model_{ARGS.project}_{ARGS.name}")
 	callbacks = [model_summary_callback, early_stopping_callback, pbar]
-	
+
 	if ARGS.batchsizefinder:
 		bsf = BatchSizeFinder("binsearch", init_val=4)
 		callbacks.append(bsf)
-	
+
 	# Trainer
 	trainer = Trainer(callbacks=callbacks,
-				   sync_batchnorm=True,
-				  logger=wandb_logger,
-				  accelerator=CONFIG["device"],
+					sync_batchnorm=True,
+					logger=wandb_logger,
+					accelerator=CONFIG["device"],
 				log_every_n_steps=1,
 				max_epochs=CONFIG["training"]["num_epochs"],
 				min_epochs=1,
@@ -151,7 +156,7 @@ def main():
 		trainer.fit(model, datamodule=data_module, ckpt_path=ARGS.resume)
 	else:
 		trainer.fit(model, datamodule=data_module)
-	
+
 
 if __name__ == "__main__":
 	main()
