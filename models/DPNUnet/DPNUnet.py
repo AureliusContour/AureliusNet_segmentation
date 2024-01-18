@@ -1,7 +1,7 @@
 # Library dependencies
 from torch import nn
 import torch.utils.checkpoint as checkpoint
-from .components import AureliusUpLayer
+from .components import UpLayer
 from .components import DownLayer
 from .components import ConvBNReLU
 
@@ -18,22 +18,22 @@ class DPNUnet(nn.Module):
 		super(DPNUnet, self).__init__()
 		self.input_conv = nn.Sequential(
 			ConvBNReLU(3, 10),
-			nn.MaxPool2d(3, stride=2, padding=1)
+			# nn.MaxPool2d(3, stride=2, padding=1)
 		)
 
 		self.down_layer1 = DownLayer(10, 96, 128, 128, 80, 64, 3)
 		self.down_layer2 = DownLayer(144, 192, 256, 256, 160, 128, 4)
 		self.down_layer3 = DownLayer(320, 320, 512, 512, 288, 256, 12)
 		self.down_layer4 = DownLayer(704, 640, 1024, 1024, 576, 512, 3)
+		# self.center_block = ConvBNReLU(832, 832)
+
+		self.up_layer4 = UpLayer(1536, 320, upsample_mode=upsample_mode)
+		self.up_layer3 = UpLayer(640, 144, upsample_mode=upsample_mode)
+		self.up_layer2 = UpLayer(288, 64, upsample_mode=upsample_mode)
+		self.up_layer1 = UpLayer(74, 64, upsample_mode=upsample_mode)
 		
-		self.center_block = ConvBNReLU(832, 832)
-		self.up_layer4 = AureliusUpLayer(1536, 320, upsample_mode=upsample_mode)
-		self.up_layer3 = AureliusUpLayer(640, 144, upsample_mode=upsample_mode)
-		self.up_layer2 = AureliusUpLayer(288, 64, upsample_mode=upsample_mode)
-		self.up_layer1 = AureliusUpLayer(74, 64, upsample_mode=upsample_mode)
-		
-		self.upsample = nn.Upsample(scale_factor=2, mode=upsample_mode)
-		self.final_conv_block = ConvBNReLU(64, 1)
+		# self.upsample = nn.Upsample(scale_factor=2, mode=upsample_mode)
+		self.final_conv_block = nn.Conv2d(64, 1, kernel_size=1)
 		self.sigmoid = nn.Sigmoid()
 	
 	def custom_checkpoint_call(self, module, doubleInput=False):
@@ -56,7 +56,7 @@ class DPNUnet(nn.Module):
 		down_layer4 = self.down_layer4(down_layer3)
 		# down_layer4 = checkpoint.checkpoint(self.custom_checkpoint_call(self.down_layer4), down_layer3, use_reentrant=False)
 		# Center block
-		down_layer4 = self.center_block(down_layer4)
+		# down_layer4 = self.center_block(down_layer4)
 		# Up layers (with skip connections)
 		up_layer4 = self.up_layer4(down_layer4, down_layer3)
 		# up_layer4 = checkpoint.checkpoint(self.custom_checkpoint_call(self.up_layer4, doubleInput=True), down_layer4, down_layer3, use_reentrant=False)
@@ -65,7 +65,7 @@ class DPNUnet(nn.Module):
 		# up_layer2 = checkpoint.checkpoint(self.custom_checkpoint_call(self.up_layer2, doubleInput=True), up_layer3, down_layer1, use_reentrant=False)
 		up_layer1 = self.up_layer1(up_layer2, x)
 		# Output
-		x = self.upsample(up_layer1)
+		# x = self.upsample(up_layer1)
 		x = self.final_conv_block(x)
 		x = self.sigmoid(x)
 		return x
