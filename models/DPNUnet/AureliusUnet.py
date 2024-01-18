@@ -19,12 +19,12 @@ class AureliusUnet(nn.Module):
 		self.down_layer2 = AureliusDownLayer(144, 96, 96, 256, 32, True)
 		self.down_layer3 = AureliusDownLayer(288, 192, 192, 512, 64)
 		self.down_layer4 = AureliusDownLayer(576, 384, 384, 1024, 128, True)
-		self.center_block = ConvBNReLU(1152, 576)
+		self.center_block = DoubleConv(1152, 576)
 		self.up_layer4 = AureliusUpLayer(1152, 288, upsample_mode=upsample_mode, checkpoint=True)
 		self.up_layer3 = AureliusUpLayer(576, 144, upsample_mode=upsample_mode)
 		self.up_layer2 = AureliusUpLayer(288, 72,  upsample_mode=upsample_mode, checkpoint=True)
 		self.up_layer1 = AureliusUpLayer(136, 64, upsample_mode=upsample_mode)
-		self.final_conv_block = DoubleConv(64, 1)
+		self.final_conv_block = ConvBNReLU(64, 1)
 		self.sigmoid = nn.Sigmoid()
 
 	def custom_checkpoint_call(self, module, doubleInput=False):
