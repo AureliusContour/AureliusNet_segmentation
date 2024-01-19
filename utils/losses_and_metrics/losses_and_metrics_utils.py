@@ -27,24 +27,24 @@ class DiceLoss(nn.Module):
         return 1 - dice
 
 def calculate_confidence(preds, threshold=0.8):
-     """
-    Calculates prediction confidence scores and identifies low-confidence predictions.
+	"""
+	Calculates prediction confidence scores and identifies low-confidence predictions.
 
-    Args:
-        preds (torch.Tensor): Model predictions.
-        threshold (float): Confidence threshold.
+	Args:
+		preds (torch.Tensor): Model predictions.
+		threshold (float): Confidence threshold.
 
-    Returns:
-        torch.Tensor: Confidence scores.
-        torch.Tensor: Predicted classes.
-        torch.Tensor: Indices of low-confidence predictions.
-    """
-    prob = F.softmax(preds, dim=1)
-    confidence, predictions = torch.max(prob, dim=1)
-    # Identify low-confidence predictions
-    low_confidence_idx = torch.where(confidence < threshold)
-    
-    return confidence, predictions, low_confidence_idx[0]
+	Returns:
+		torch.Tensor: Confidence scores.
+		torch.Tensor: Predicted classes.
+		torch.Tensor: Indices of low-confidence predictions.
+	"""
+	prob = F.softmax(preds, dim=1)
+	confidence, predictions = torch.max(prob, dim=1)
+	# Identify low-confidence predictions
+	low_confidence_idx = torch.where(confidence < threshold)
+
+	return confidence, predictions, low_confidence_idx[0]
 
 def dice_score(predicted_masks, true_masks, epsilon=1e-8):
     """
