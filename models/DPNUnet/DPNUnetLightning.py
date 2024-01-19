@@ -9,9 +9,9 @@ class DPNUnetLightning(L.LightningModule):
 	def __init__(self, 
 			  	lossFunction:nn.Module,
 				learning_rate=1e-3,
-				upsample_mode:str="nearest"):
+				upsample_mode:str="bilinear"):
 		super().__init__()
-		self.__dpnunet = DPNUnet(upsample_mode=upsample_mode, dpn_block_count_1=1, dpn_block_count_2=1, dpn_block_count_3=1, dpn_block_count_4=1)
+		self.__dpnunet = DPNUnet(upsample_mode=upsample_mode)
 		self.__lossFunction = lossFunction
 		self.__learning_rate = learning_rate
 
