@@ -1,9 +1,11 @@
-from .DPNUnet import DPNUnet
+from .DPNUnet import DPN68Unet, DPN92Unet, PaperDPNUnet
 from .DPNUnetLightning import DPNUnetLightning
 from . import components
 from .AureliusUnet import AureliusUnet
 from .AureliusUnetLightning import AureliusUnetLightning
 
 __all__ = [
-	"DPNUnet", "DPNUnetLightning", "components", "AureliusUnet", "AureliusUnetLightning"
+	"DPN68Unet", "DPN92Unet", "PaperDPNUnet", "DPNUnetLightning",
+	"AureliusUnet", "AureliusUnetLightning",
+	"components", 
 ]

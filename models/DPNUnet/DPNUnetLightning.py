@@ -2,16 +2,23 @@
 from torch import nn
 import lightning as L
 from torch.optim import Adam
-from .DPNUnet import DPNUnet
+from .DPNUnet import DPN68Unet, DPN92Unet, PaperDPNUnet
 
 # LightningModule
 class DPNUnetLightning(L.LightningModule):
 	def __init__(self, 
 			  	lossFunction:nn.Module,
 				learning_rate=1e-3,
-				upsample_mode:str="bilinear"):
+				upsample_mode:str="bilinear",
+				variant="dpn68"):
 		super().__init__()
-		self.__dpnunet = DPNUnet(upsample_mode=upsample_mode)
+		if variant == "dpn68":
+			self.__dpnunet = DPN68Unet(upsample_mode=upsample_mode)
+		elif variant == "dpn92":
+			self.__dpnunet = DPN92Unet(upsample_mode=upsample_mode)
+		elif variant == "paper_dpn92":
+			self.__dpnunet = PaperDPNUnet(upsample_mode=upsample_mode)
+
 		self.__lossFunction = lossFunction
 		self.__learning_rate = learning_rate
 
