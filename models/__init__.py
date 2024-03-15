@@ -1,7 +1,10 @@
-from .DPNUnet import DPNUnet, DPNUnetLightning, AureliusUnet, AureliusUnetLightning
+from .DPNUnet import DPN68Unet, DPN92Unet, PaperDPNUnet, DPNUnetLightning, AureliusUnet, AureliusUnetLightning
 from .Unet import Unet, UnetLightning
 from .InceptionUnet import InceptionUNet, InceptionUnetLightning
 
 __all__ = [
-	"DPNUnet", "DPNUnetLightning", "AureliusNet", "Unet", "UnetLightning", "InceptionUnet", "InceptionUnetLightning", "AureliusUnet", "AureliusUnetLightning"
+	"DPN92Unet", "DPN68Unet", "PaperDPNUnet", "DPNUnetLightning", 
+	"AureliusUnet", "AureliusUnetLightning", 
+	"Unet", "UnetLightning", 
+	"InceptionUNet", "InceptionUnetLightning", 
 ]
