@@ -169,3 +169,4 @@ wandb/
 artifacts/
 kaggle/
 kaggle.zip
+predict.ipynb

@@ -3,8 +3,6 @@ from .components import *
 class Unet(nn.Module):
     def __init__(self, n_channels):
         super(Unet, self).__init__()
-        self.n_channels = n_channels
-
         self.inc = (DoubleConv(n_channels, 64))
         self.down1 = (DownLayer(64, 128))
         self.down2 = (DownLayer(128, 256))
