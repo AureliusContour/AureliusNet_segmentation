@@ -34,13 +34,13 @@ class IdentityResidualBlock_V2(nn.Module):
 			mid_channels = out_channels
 		
 		self.conv1 = nn.Sequential(
-			nn.BatchNorm2d(mid_channels),
+			nn.BatchNorm2d(in_channels),
             nn.ReLU(inplace=True),
 			nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, stride=1)
 		)
 
 		self.conv2 = nn.Sequential(
-			nn.BatchNorm2d(out_channels),
+			nn.BatchNorm2d(mid_channels),
 			nn.ReLU(inplace=True),
 			nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, stride=1)
 		)
@@ -90,19 +90,19 @@ class ProjectionResidualBlock_V2(nn.Module):
 			mid_channels = out_channels
 		
 		self.conv1 = nn.Sequential(
-			nn.BatchNorm2d(mid_channels),
+			nn.BatchNorm2d(in_channels),
             nn.ReLU(inplace=True),			
 			nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1, stride=stride)
 		)
 
 		self.conv2 = nn.Sequential(
-			nn.BatchNorm2d(out_channels),
+			nn.BatchNorm2d(mid_channels),
 			nn.ReLU(inplace=True),	
 			nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1, stride=1)
 		)
 
 		self.conv_shortcut = nn.Sequential(
-			nn.BatchNorm2d(out_channels),
+			nn.BatchNorm2d(in_channels),
 			nn.ReLU(inplace=True),	
 			nn.Conv2d(in_channels, out_channels, kernel_size=1, padding=0, stride=stride)
 		)
