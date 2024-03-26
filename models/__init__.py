@@ -2,11 +2,13 @@ from .DPNUnet import DPN68Unet, DPN92Unet, PaperDPNUnet, DPNUnetLightning, Aurel
 from .Unet import Unet, UnetLightning
 from .InceptionUnet import InceptionUnet, InceptionUnetLightning
 from .ResidualUnet import ResidualUnet, ResidualUnet_V2
+from .AttentionUnet import AttentionUnet
 
 __all__ = [
 	"DPN92Unet", "DPN68Unet", "PaperDPNUnet", "DPNUnetLightning", 
 	"AureliusUnet", "AureliusUnetLightning", 
 	"Unet", "UnetLightning", 
 	"InceptionUnet", "InceptionUnetLightning", 
-	"ResidualUnet", "ResidualUnet_V2"
+	"ResidualUnet", "ResidualUnet_V2",
+	"AttentionUnet"
 ]

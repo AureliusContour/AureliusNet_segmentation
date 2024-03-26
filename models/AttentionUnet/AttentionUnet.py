@@ -1,18 +1,18 @@
 from .components import *
 
-class Unet(nn.Module):
+class AttentionUnet(nn.Module):
     def __init__(self, n_channels):
-        super(Unet, self).__init__()
+        super(AttentionUnet, self).__init__()
         self.inc = (DoubleConv(n_channels, 64))
         self.down1 = (DownLayer(64, 128))
         self.down2 = (DownLayer(128, 256))
         self.down3 = (DownLayer(256, 512))
         self.down4 = (DownLayer(512, 512))
         
-        self.up1 = (UpLayer(512 + 512, 256))
-        self.up2 = (UpLayer(256 + 256, 128))
-        self.up3 = (UpLayer(128 + 128, 64))
-        self.up4 = (UpLayer(64 + 64, 64))
+        self.up1 = (UpLayer(512, 512, 256))
+        self.up2 = (UpLayer(256, 256, 128))
+        self.up3 = (UpLayer(128, 128, 64))
+        self.up4 = (UpLayer(64, 64, 64))
         self.outc = (OutConv(64, 1))
 
     def forward(self, x):
