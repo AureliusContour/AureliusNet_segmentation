@@ -2,7 +2,7 @@
 from torch import nn
 import lightning as L
 from torch.optim import Adam
-from .InceptionUnet import InceptionUNet
+from .InceptionUnet import InceptionUnet
 
 # LightningModule
 class InceptionUnetLightning(L.LightningModule):
@@ -11,7 +11,7 @@ class InceptionUnetLightning(L.LightningModule):
 				learning_rate=1e-3,
 				n_channels=3):
 		super().__init__()
-		self.__unet = InceptionUNet(n_channels=n_channels)
+		self.__unet = InceptionUnet(n_channels=n_channels)
 		self.__lossFunction = lossFunction
 		self.__learning_rate = learning_rate
 

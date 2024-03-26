@@ -4,9 +4,9 @@ import torch
 from .components import *
 
 
-class InceptionUNet(nn.Module):
+class InceptionUnet(nn.Module):
     def __init__(self, n_channels):
-        super(InceptionUNet, self).__init__()
+        super(InceptionUnet, self).__init__()
         self.n_channels = n_channels
 
         self.block1 = InceptionDoubleConv(64, 32)
