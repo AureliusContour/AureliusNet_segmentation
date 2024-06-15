@@ -26,6 +26,13 @@ class InceptionUnet(nn.Module):
         self.up4 = UpInceptionLayer(208, 16)
         self.outc = OutConv(16, 1)
 
+     """
+        Forward pass through the network.
+        
+        Returns:
+            torch.Tensor: Output tensor after passing through the network.
+        """
+
     def forward(self, x):
         x1 = self.inc(x)
         x2 = self.down1(x1)
