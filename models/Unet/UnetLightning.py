@@ -4,7 +4,8 @@ import lightning as L
 from torch.optim import Adam
 from .Unet import Unet
 
-# LightningModule
+
+# Lightning Module
 class UnetLightning(L.LightningModule):
 	def __init__(self, 
 			  	lossFunction:nn.Module,
