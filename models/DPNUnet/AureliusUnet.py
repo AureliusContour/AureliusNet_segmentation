@@ -41,7 +41,7 @@ class AureliusUnet(nn.Module):
 				inputs = module(inputs[0])
 			return inputs
 		return custom_forward
-	
+
 	def forward(self, x):
 		# Initial
 		x1 = self.input_conv(x)
